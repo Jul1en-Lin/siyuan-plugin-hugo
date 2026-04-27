@@ -1,6 +1,6 @@
 {
   "name": "siyuan-plugin-hugo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "SiYuan plugin for exporting the current document into a local Hugo repository.",
   "repository": "https://github.com/Jul1en-Lin/siyuan-plugin-hugo",
