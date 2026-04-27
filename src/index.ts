@@ -210,8 +210,29 @@ export default class SiyuanHugoPlugin extends Plugin {
     }
 
     private getCurrentDocId() {
-        const editor = getAllEditor()[0];
-        return editor?.protyle?.block?.rootID;
+        const editors = getAllEditor();
+        if (editors.length === 0) {
+            return undefined;
+        }
+
+        // Prefer the editor that currently has focus
+        const focusedEditor = editors.find((e) =>
+            e.protyle?.element?.contains(document.activeElement)
+        );
+        if (focusedEditor) {
+            return focusedEditor.protyle.block.rootID;
+        }
+
+        // Fall back to the first visible editor (not inside a hidden tab container)
+        const visibleEditor = editors.find((e) =>
+            e.protyle?.element && !e.protyle.element.closest(".fn__none")
+        );
+        if (visibleEditor) {
+            return visibleEditor.protyle.block.rootID;
+        }
+
+        // Ultimate fallback to the first editor in DOM order
+        return editors[0]?.protyle?.block?.rootID;
     }
 
     private resolveTopBarRect() {
