@@ -1,33 +1,26 @@
 {
-  "name": "plugin-sample-vite-svelte",
-  "author": "frostime",
-  "url": "https://github.com/siyuan-note/plugin-sample-vite-svelte",
-  "version": "0.4.1",
+  "name": "siyuan-plugin-hugo",
+  "author": "Jul1en-Lin",
+  "url": "https://github.com/Jul1en-Lin/siyuan-plugin-hugo",
+  "version": "0.1.0",
   "minAppVersion": "3.2.1",
-  "disabledInPublish": true,
+  "disabledInPublish": false,
   "backends": [
     "windows",
     "linux",
-    "darwin",
-    "ios",
-    "android",
-    "harmony",
-    "docker"
+    "darwin"
   ],
   "frontends": [
     "desktop",
-    "mobile",
-    "browser-desktop",
-    "browser-mobile",
     "desktop-window"
   ],
   "displayName": {
-    "default": "Plugin sample with vite and svelte",
-    "zh_CN": "插件样例 vite + svelte 版"
+    "default": "SiYuan Hugo Sync",
+    "zh_CN": "思源 Hugo 同步"
   },
   "description": {
-    "default": "SiYuan plugin sample with vite and svelte",
-    "zh_CN": "使用 vite 和 svelte 开发的思源插件样例"
+    "default": "Export the current SiYuan document into a local Hugo repository and optionally push it with git.",
+    "zh_CN": "将当前思源文档一键导出到本地 Hugo 仓库，并可按需执行 Git 推送。"
   },
   "readme": {
     "default": "README.md",
@@ -37,12 +30,13 @@
     "openCollective": "",
     "patreon": "",
     "github": "",
-    "custom": [
-      "https://ld246.com/sponsor"
-    ]
+    "custom": []
   },
   "keywords": [
-    "sample",
-    "示例"
+    "hugo",
+    "static-site",
+    "git",
+    "静态网站",
+    "发布"
   ]
 }
