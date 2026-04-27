@@ -2,8 +2,10 @@ import { Plugin, Menu, getAllEditor, getFrontend, showMessage } from "siyuan";
 import "./index.scss";
 import { SettingUtils } from "./libs/setting-utils";
 import { exportDocumentToHugo } from "./hugo-exporter";
-import { hasNodeRuntime } from "./node-runtime";
+import { hasNodeRuntime, getNodeRuntime } from "./node-runtime";
 import { DEFAULT_SETTINGS, SETTINGS_STORAGE_NAME, type HugoPluginSettings } from "./settings";
+import { getBlockByID, lsNotebooks } from "@/api";
+import { confirmDialog } from "./libs/dialog";
 
 export default class SiyuanHugoPlugin extends Plugin {
     private isDesktop = false;
@@ -111,6 +113,19 @@ export default class SiyuanHugoPlugin extends Plugin {
             },
         });
         this.settingUtils.addItem({
+            key: "confirmCategoryBeforeExport",
+            value: DEFAULT_SETTINGS.confirmCategoryBeforeExport,
+            type: "checkbox",
+            title: this.i18n.confirmCategoryBeforeExport,
+            description: this.i18n.confirmCategoryBeforeExportDesc,
+            action: {
+                callback: async () => {
+                    const value = !this.settingUtils.get("confirmCategoryBeforeExport");
+                    await this.settingUtils.setAndSave("confirmCategoryBeforeExport", value);
+                },
+            },
+        });
+        this.settingUtils.addItem({
             key: "hint",
             value: "",
             type: "hint",
@@ -165,9 +180,24 @@ export default class SiyuanHugoPlugin extends Plugin {
             return;
         }
 
+        const docBlock = await getBlockByID(docId);
+        const notebooksRes = await lsNotebooks();
+        const notebook = notebooksRes?.notebooks?.find((n) => n.id === docBlock?.box);
+        let category = notebook?.name?.trim() || settings.defaultCategory;
+
+        if (settings.confirmCategoryBeforeExport) {
+            const existingCategories = scanExistingCategories(settings.hugoRepoPath, settings.contentBaseDir);
+            const confirmed = await this.confirmCategoryDialog(category, existingCategories);
+            if (confirmed === null) {
+                return;
+            }
+            category = confirmed.trim();
+        }
+
         try {
             const result = await exportDocumentToHugo(docId, settings, {
                 push: forcePush || settings.autoPushAfterExport,
+                category,
                 messages: {
                     repoPathRequired: this.i18n.repoPathRequired,
                     docNotFound: this.i18n.docNotFound,
@@ -235,6 +265,52 @@ export default class SiyuanHugoPlugin extends Plugin {
         return editors[0]?.protyle?.block?.rootID;
     }
 
+    private confirmCategoryDialog(detectedCategory: string, existingCategories: string[]): Promise<string | null> {
+        return new Promise((resolve) => {
+            const container = document.createElement("div");
+            const initialSelected = detectedCategory
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+
+            let html = "";
+            if (existingCategories.length > 0) {
+                html += `<div style="margin-bottom:4px;font-weight:bold">${this.i18n.categoryListTitle}</div>`;
+                html += `<div style="max-height:120px;overflow-y:auto;margin-bottom:12px">`;
+                for (const cat of existingCategories) {
+                    const checked = initialSelected.includes(cat) ? "checked" : "";
+                    html += `<label style="display:block;margin:4px 0;cursor:pointer"><input type="checkbox" value="${cat}" ${checked}> ${cat}</label>`;
+                }
+                html += `</div>`;
+            }
+            html += `<div style="margin-bottom:4px;font-weight:bold">${this.i18n.customCategoryLabel}</div>`;
+            html += `<input type="text" class="b3-text-field fn__block category-custom-input" value="">`;
+            html += `<div style="margin-top:4px;font-size:12px;color:var(--b3-theme-on-surface-light)">${this.i18n.customCategoryHint}</div>`;
+
+            container.innerHTML = html;
+            const input = container.querySelector(".category-custom-input") as HTMLInputElement;
+            input.value = detectedCategory;
+
+            confirmDialog({
+                title: this.i18n.confirmCategoryTitle,
+                content: container,
+                confirm: () => {
+                    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+                    const checked = Array.from(checkboxes)
+                        .filter((cb: HTMLInputElement) => cb.checked)
+                        .map((cb: HTMLInputElement) => cb.value);
+                    const custom = input.value
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                    const merged = [...new Set([...checked, ...custom])];
+                    resolve(merged.join(","));
+                },
+                cancel: () => resolve(null),
+            });
+        });
+    }
+
     private resolveTopBarRect() {
         let rect = this.topBarElement?.getBoundingClientRect();
         if (!rect || rect.width === 0) {
@@ -245,4 +321,49 @@ export default class SiyuanHugoPlugin extends Plugin {
         }
         return rect ?? new DOMRect(window.innerWidth - 48, 32, 0, 0);
     }
+}
+
+function scanExistingCategories(repoPath: string, contentBaseDir: string): string[] {
+    const node = getNodeRuntime();
+    const contentDir = node.path.resolve(repoPath, contentBaseDir.trim().replace(/^[\\/]+|[\\/]+$/g, ""));
+    if (!node.fs.existsSync(contentDir)) {
+        return [];
+    }
+
+    const categories = new Set<string>();
+    function walk(dir: string) {
+        for (const entry of node.fs.readdirSync(dir, { withFileTypes: true })) {
+            const fullPath = node.path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                walk(fullPath);
+            } else if (entry.name === "index.md") {
+                try {
+                    const content = node.fs.readFileSync(fullPath, "utf8");
+                    // Array format: categories = ["a", "b"]
+                    const arrayMatch = content.match(/categories\s*=\s*\[([^\]]*)\]/);
+                    if (arrayMatch) {
+                        const inner = arrayMatch[1];
+                        const re = /"([^"]*)"|'([^']*)'/g;
+                        let m;
+                        while ((m = re.exec(inner)) !== null) {
+                            categories.add(m[1] ?? m[2]);
+                        }
+                    }
+                    // String format: categories = "Git"
+                    const stringMatch = content.match(/categories\s*=\s*"([^"]*)"/);
+                    if (stringMatch) {
+                        categories.add(stringMatch[1]);
+                    }
+                    const stringMatch2 = content.match(/categories\s*=\s*'([^']*)'/);
+                    if (stringMatch2) {
+                        categories.add(stringMatch2[1]);
+                    }
+                } catch {
+                    // ignore unreadable files
+                }
+            }
+        }
+    }
+    walk(contentDir);
+    return Array.from(categories).sort();
 }

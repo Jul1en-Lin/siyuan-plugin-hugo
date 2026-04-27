@@ -30,6 +30,7 @@ export interface ExportMessages {
 export async function exportDocumentToHugo(docId: string, settings: HugoPluginSettings, options?: {
     push?: boolean;
     messages?: Partial<ExportMessages>;
+    category?: string;
 }) {
     const node = getNodeRuntime();
     const mergedSettings = { ...DEFAULT_SETTINGS, ...settings };
@@ -87,7 +88,7 @@ export async function exportDocumentToHugo(docId: string, settings: HugoPluginSe
         draft,
         createdAt,
         updatedAt,
-        category: mergedSettings.defaultCategory,
+        category: options?.category ?? mergedSettings.defaultCategory,
         tags,
         siyuanId: docId,
         siyuanPath: exported.hPath || docBlock.hpath || "",
@@ -254,8 +255,9 @@ function buildTomlFrontMatter(meta: {
         `draft = ${meta.draft ? "true" : "false"}`,
     ];
 
-    if (meta.category.trim()) {
-        lines.push(`categories = [${JSON.stringify(meta.category.trim())}]`);
+    const cats = meta.category.split(",").map(s => s.trim()).filter(Boolean);
+    if (cats.length) {
+        lines.push(`categories = [${cats.map(c => JSON.stringify(c)).join(", ")}]`);
     }
     if (meta.tags.length) {
         lines.push(`tags = [${meta.tags.map((tag) => JSON.stringify(tag)).join(", ")}]`);
