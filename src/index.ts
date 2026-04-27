@@ -289,7 +289,6 @@ export default class SiyuanHugoPlugin extends Plugin {
 
             container.innerHTML = html;
             const input = container.querySelector(".category-custom-input") as HTMLInputElement;
-            input.value = detectedCategory;
 
             confirmDialog({
                 title: this.i18n.confirmCategoryTitle,
