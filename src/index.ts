@@ -261,6 +261,13 @@ export default class SiyuanHugoPlugin extends Plugin {
                     .replace("${title}", result.title)
                     .replace("${count}", String(result.assetCount)),
             );
+
+            if (result.skippedAssets.length > 0) {
+                const skippedNames = result.skippedAssets
+                    .map((p) => decodeURIComponent(p.split("/").pop() || p))
+                    .join(", ");
+                showMessage(`${this.i18n.assetsSkipped}: ${skippedNames}`);
+            }
         } catch (error) {
             console.error(`[${this.name}] export failed`, error);
             const message = error instanceof Error ? error.message : String(error);

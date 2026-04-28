@@ -42,6 +42,7 @@
     "exportSuccess": "Exported ${title} with ${count} assets.",
     "exportAndPushSuccess": "Exported and pushed ${title} with ${count} assets.",
     "exportFailed": "Export failed",
+    "assetsSkipped": "The following assets were not exported, please handle them manually",
     "settingsUnavailable": "Unable to open the settings panel.",
     "hintTitle": "Notes",
     "hintDesc": "Per-document overrides: custom-hugo-slug, custom-hugo-section, custom-hugo-draft."

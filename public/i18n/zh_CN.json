@@ -42,6 +42,7 @@
     "exportSuccess": "已导出《${title}》，同步 ${count} 个资源文件。",
     "exportAndPushSuccess": "已导出并推送《${title}》，同步 ${count} 个资源文件。",
     "exportFailed": "导出失败",
+    "assetsSkipped": "以下资源未成功导出，请手动处理",
     "settingsUnavailable": "无法打开设置面板。",
     "hintTitle": "说明",
     "hintDesc": "可在文档根块上设置这些自定义属性：custom-hugo-slug、custom-hugo-section、custom-hugo-draft。"
