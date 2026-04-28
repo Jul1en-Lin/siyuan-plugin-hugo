@@ -37,8 +37,8 @@ export default defineConfig({
             targets: [
                 { src: "./README*.md", dest: "./" },
                 { src: "./plugin.json", dest: "./" },
-                { src: "./preview.png", dest: "./" },
-                { src: "./icon.png", dest: "./" }
+                { src: "./asset/preview.png", dest: "./" },
+                { src: "./asset/icon.png", dest: "./" }
             ],
         }),
 
