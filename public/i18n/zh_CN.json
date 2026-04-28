@@ -1,4 +1,8 @@
 {
+    "language": "界面语言",
+    "languageDesc": "选择插件界面显示的语言，跟随系统时由思源自动决定。",
+    "languageAuto": "跟随系统",
+    "languageChanged": "语言已切换，建议重启思源笔记以完全生效。",
     "exportCurrentDocCommand": "导出当前文档到 Hugo",
     "exportAndPushCommand": "导出当前文档并推送",
     "openPluginSettingsCommand": "打开 Hugo 同步设置",
@@ -11,7 +15,7 @@
     "contentBaseDir": "内容目录",
     "contentBaseDirDesc": "Hugo 仓库内的相对内容目录，例如 content/post。",
     "defaultCategory": "默认分类",
-    "defaultCategoryDesc": "导出时可选写入 front matter 的分类。",
+    "defaultCategoryDesc": "导出时可选写入 categories，也提供导出前确认分类选项，默认为空。",
     "confirmCategoryBeforeExport": "导出前确认分类",
     "confirmCategoryBeforeExportDesc": "导出前弹出对话框，允许查看或修改检测到的分类。",
     "confirmCategoryTitle": "确认导出分类",

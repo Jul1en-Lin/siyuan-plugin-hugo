@@ -7,6 +7,15 @@ import { DEFAULT_SETTINGS, SETTINGS_STORAGE_NAME, type HugoPluginSettings } from
 import { getBlockByID, lsNotebooks } from "@/api";
 import { confirmDialog } from "./libs/dialog";
 
+import zhCN from "../public/i18n/zh_CN.json";
+import enUS from "../public/i18n/en_US.json";
+
+const I18N_MAP: Record<string, any> = {
+    "": undefined,
+    zh_CN: zhCN,
+    en_US: enUS,
+};
+
 export default class SiyuanHugoPlugin extends Plugin {
     private isDesktop = false;
     private settingUtils!: SettingUtils;
@@ -14,6 +23,13 @@ export default class SiyuanHugoPlugin extends Plugin {
 
     async onload() {
         this.isDesktop = getFrontend() === "desktop" || getFrontend() === "desktop-window";
+
+        const saved = await this.loadData(`${SETTINGS_STORAGE_NAME}.json`);
+        const language = saved?.language ?? DEFAULT_SETTINGS.language;
+        if (language && I18N_MAP[language]) {
+            this.i18n = I18N_MAP[language];
+        }
+
         this.registerSettings();
         await this.settingUtils.load();
 
@@ -52,6 +68,34 @@ export default class SiyuanHugoPlugin extends Plugin {
         this.settingUtils = new SettingUtils({
             plugin: this,
             name: SETTINGS_STORAGE_NAME,
+        });
+
+        this.settingUtils.addItem({
+            key: "language",
+            value: DEFAULT_SETTINGS.language,
+            type: "select",
+            title: this.i18n.language,
+            description: this.i18n.languageDesc,
+            options: {
+                "": this.i18n.languageAuto,
+                zh_CN: "简体中文",
+                en_US: "English",
+            },
+            action: {
+                callback: async () => {
+                    const value = this.settingUtils.take("language", true) as string;
+                    await this.settingUtils.save();
+                    const next = I18N_MAP[value];
+                    if (next) {
+                        this.i18n = next;
+                    } else {
+                        // Reload to let framework pick system language
+                        window.location.reload();
+                        return;
+                    }
+                    showMessage(this.i18n.languageChanged);
+                },
+            },
         });
 
         this.settingUtils.addItem({

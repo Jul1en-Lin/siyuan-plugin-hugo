@@ -7,6 +7,7 @@ export const DOC_ATTR_KEYS = {
 } as const;
 
 export interface HugoPluginSettings {
+    language: string;
     hugoRepoPath: string;
     contentBaseDir: string;
     defaultCategory: string;
@@ -17,6 +18,7 @@ export interface HugoPluginSettings {
 }
 
 export const DEFAULT_SETTINGS: HugoPluginSettings = {
+    language: "",
     hugoRepoPath: "",
     contentBaseDir: "content/post",
     defaultCategory: "",
