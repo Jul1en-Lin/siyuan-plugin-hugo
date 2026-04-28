@@ -19,30 +19,19 @@
 
 ## 安装
 
-### 方式一：集市安装
-
-在思源笔记中打开 **设置 → 集市 → 搜索「SiYuan Hugo Sync」**，点击安装即可。
-
-### 方式二：手动安装
+该插件暂未上线集市，需手动安装。
 
 1. 从 [Releases](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/releases) 页面下载 `package.zip`。
 2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`。
 3. 重启思源笔记或重新加载插件。
 
+思源工作空间可在客户端设置中查看，如图
+<img width="920" height="342" alt="image" src="https://github.com/user-attachments/assets/27862d7a-03b8-4174-a5b8-d45eaa5ae270" />
+
+
 ## 配置
 
-打开 **设置 → 集市 → 已安装 → 思源 Hugo 同步**，配置以下选项：
-
-| 配置项 | 说明 | 默认值 |
-|--------|------|--------|
-| 语言 | 插件界面语言，留空跟随思源系统语言 | *(空)* |
-| Hugo 仓库路径 | 本地 Hugo 仓库根目录的绝对路径 | *(空)* |
-| 内容目录 | Hugo 仓库内的相对内容目录 | `content/post` |
-| 默认分类 | 可选，写入 front matter 的分类 | *(空)* |
-| 提交信息模板 | 支持 `{title}` 和 `{docId}` 占位符 | `docs(hugo): sync {title}` |
-| 默认标记为草稿 | 导出时默认将文章标记为 draft | `false` |
-| 导出后自动推送 | 导出后自动执行 git add/commit/push | `false` |
-| 导出前确认分类 | 导出前弹出分类确认对话框 | `true` |
+解压后重启思源笔记，即可在已下载的插件中显示，若不显示则解压目录文件名不一致插件无法识别，指定 `siyuan-plugin-hugo`
 
 ## 单文档属性覆盖
 
