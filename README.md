@@ -4,7 +4,7 @@
 
 将思源笔记中的文档一键导出到本地 Hugo 仓库，并可按需自动执行 Git 推送。
 
-![preview](https://raw.githubusercontent.com/Jul1en-Lin/siyuan-plugin-hugo/main/asset/preview.png)
+![preview](https://raw.githubusercontent.com/Jul1en-Lin/siyuan-plugin-hugo/main/preview.png)
 
 ## 功能特性
 
