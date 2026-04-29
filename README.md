@@ -4,7 +4,7 @@
 
 将思源笔记中的文档一键导出到本地 Hugo 仓库，并可按需自动执行 Git 推送。
 
-![preview](./asset/preview.png)
+![preview](https://raw.githubusercontent.com/Jul1en-Lin/siyuan-plugin-hugo/main/asset/preview.png)
 
 ## 功能特性
 
@@ -18,7 +18,11 @@
 
 ## 安装
 
-该插件暂未上线集市，需手动安装。
+### 从集市安装
+
+打开思源笔记**设置 → 集市 → 搜索 "思源 Hugo 同步"**，点击安装。
+
+### 手动安装
 
 1. 从 [Releases](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/releases) 页面下载 `package.zip`。
 2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`，解压目录文件名需指定 `siyuan-plugin-hugo`

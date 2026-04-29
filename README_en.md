@@ -4,7 +4,7 @@
 
 A SiYuan plugin that exports the current document to a local Hugo repository, with optional automatic Git push.
 
-![preview](./asset/preview.png)
+![preview](https://raw.githubusercontent.com/Jul1en-Lin/siyuan-plugin-hugo/main/asset/preview.png)
 
 ## Features
 
