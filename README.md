@@ -1,4 +1,4 @@
-# SiYuan Hugo Sync
+# siyuan-plugin-hugo
 
 > **[English](./README_en.md)** | 中文
 
@@ -8,13 +8,12 @@
 
 ## 功能特性
 
-- **导出为 Hugo Leaf Bundle** — 将当前文档导出为 `content/<section>/<folder>/index.md`，连同所有引用资源一并同步。
-- **资源文件自动同步** — 自动将思源中引用的 `/assets/...` 文件复制到 leaf bundle 的 `assets/` 子目录，并重写 markdown 中的链接路径。
-- **TOML Front Matter** — 自动生成 Hugo 兼容的 front matter，包含 `title`、`slug`、`date`、`lastmod`、`draft`、`categories`、`tags`、`siyuan_id`、`siyuan_path`。
+- **一键导出思源文档至本地 Hugo** — 将当前文档导出为 `~./content/post/<folder>/index.md`，连同所有引用资源一并同步。
+- **资源文件自动同步** — 参考思源导出文档的标准格式，资源文件统一放置到`assets/` 子目录，同时优化 markdown 中的链接路径。
+- **TOML Front Matter** — 自动生成 Hugo 兼容的 front matter，包含 `title`、`slug`、`date`、`lastmod`、`draft`、`categories`、`siyuan_id`、`siyuan_path`，后续支持更多front matter。
 - **增量更新** — 通过 `siyuan_id` 识别已导出的文章目录，文档改名后不会重复创建新文件夹。
-- **Git 工作流** — 导出后可选择自动执行 `git add`、`git commit`、`git push`。
+- **版本控制** — 导出后可选择一键执行 Git 操作： `git add`、`git commit`、`git push`，支持 commmit 消息自定义。
 - **分类选择** — 导出前弹出分类确认对话框，可从已有分类中勾选，也可手动输入新分类。
-- **单文档属性覆盖** — 通过在文档根块上设置自定义属性，对单篇文章做独立控制。
 - **中英双语** — 插件界面支持中文和英文，跟随思源系统语言或手动切换。
 
 ## 安装
@@ -22,7 +21,7 @@
 该插件暂未上线集市，需手动安装。
 
 1. 从 [Releases](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/releases) 页面下载 `package.zip`。
-2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`。
+2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`，解压目录文件名需指定 `siyuan-plugin-hugo`
 3. 重启思源笔记或重新加载插件。
 
 思源工作空间可在客户端设置中查看，如图
@@ -31,22 +30,21 @@
 
 ## 配置
 
-解压后重启思源笔记，即可在已下载的插件中显示，若不显示则解压目录文件名不一致插件无法识别，指定 `siyuan-plugin-hugo`
+解压后重启思源笔记，即可在已下载的插件中显示，进入配置页面按需选择，首次配置需要添加 Hugo 仓库路径。
 
-## 单文档属性覆盖
+<img width="1448" height="1179" alt="image" src="https://github.com/user-attachments/assets/37e67a8a-70d2-45fc-83a4-fafc2af667cf" />
 
-在文档的根块上设置以下自定义属性，可覆盖全局默认值：
 
-| 属性 | 说明 |
-|------|------|
-| `custom-hugo-slug` | 自定义 URL 别名 |
-| `custom-hugo-section` | 覆盖内容目录（如 `blog`） |
-| `custom-hugo-draft` | 覆盖草稿状态（`true` / `false`） |
 
 ## 使用方式
 
 - **顶栏按钮** — 点击右上角工具栏的上传图标，选择「导出当前文档到 Hugo」或「导出当前文档并推送」。
-- **命令面板** — 使用 `Ctrl+P` 打开命令面板，搜索「导出当前文档到 Hugo」或「导出当前文档并推送」。
+
+若右上角无显示图标可在插件管理中讲图标钉住。
+<img width="613" height="126" alt="image" src="https://github.com/user-attachments/assets/3da50d63-eb1b-4ac3-954e-e7ed4ef7c662" />
+---
+<img width="434" height="247" alt="image" src="https://github.com/user-attachments/assets/97fe9c66-985d-4062-8af4-c511524663e8" />
+
 
 ## Front Matter 示例
 
@@ -60,7 +58,6 @@ date = 2025-01-15T10:30:00+08:00
 lastmod = 2025-01-15T12:00:00+08:00
 draft = false
 categories = ["技术"]
-tags = ["hugo", "思源笔记"]
 siyuan_id = "20250115103000-abcdefg"
 siyuan_path = "20250115103000-abcdefg/20250115103000-hijklmn"
 +++
