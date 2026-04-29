@@ -7,18 +7,22 @@ export const DOC_ATTR_KEYS = {
 } as const;
 
 export interface HugoPluginSettings {
+    language: string;
     hugoRepoPath: string;
     contentBaseDir: string;
     defaultCategory: string;
+    confirmCategoryBeforeExport: boolean;
     autoPushAfterExport: boolean;
     defaultDraft: boolean;
     commitMessageTemplate: string;
 }
 
 export const DEFAULT_SETTINGS: HugoPluginSettings = {
+    language: "",
     hugoRepoPath: "",
     contentBaseDir: "content/post",
     defaultCategory: "",
+    confirmCategoryBeforeExport: true,
     autoPushAfterExport: false,
     defaultDraft: false,
     commitMessageTemplate: "docs(hugo): sync {title}",

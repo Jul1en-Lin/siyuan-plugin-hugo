@@ -1,119 +1,84 @@
-# SiYuan Hugo Sync / 思源 Hugo 同步
+# siyuan-plugin-hugo
 
-[English](#english) | [中文](#中文)
+> **[English](./README_en.md)** | 中文
 
----
+将思源笔记中的文档一键导出到本地 Hugo 仓库，并可按需自动执行 Git 推送。
 
-<a id="english"></a>
-## English
+![preview](./asset/preview.png)
 
-A SiYuan plugin that exports the current document to a local Hugo repository, optionally running `git add`, `git commit`, and `git push` for the exported content.
+## 功能特性
 
-### Features
+- **一键导出思源文档至本地 Hugo** — 将当前文档导出为 `~./content/post/<folder>/index.md`，连同所有引用资源一并同步。
+- **资源文件自动同步** — 参考思源导出文档的标准格式，资源文件统一放置到`assets/` 子目录，同时优化 markdown 中的链接路径。
+- **TOML Front Matter** — 自动生成 Hugo 兼容的 front matter，包含 `title`、`slug`、`date`、`lastmod`、`draft`、`categories`、`siyuan_id`、`siyuan_path`，后续支持更多front matter。
+- **增量更新** — 通过 `siyuan_id` 识别已导出的文章目录，文档改名后不会重复创建新文件夹。
+- **版本控制** — 导出后可选择一键执行 Git 操作： `git add`、`git commit`、`git push`，支持 commmit 消息自定义。
+- **分类选择** — 导出前弹出分类确认对话框，可从已有分类中勾选，也可手动输入新分类。
+- **中英双语** — 插件界面支持中文和英文，跟随思源系统语言或手动切换。
 
-- **Export as Hugo Leaf Bundle** — Exports the current document to `content/<section>/<folder>/index.md` along with its assets.
-- **Asset Syncing** — Automatically copies referenced SiYuan `/assets/...` files into the leaf bundle and rewrites links.
-- **TOML Front Matter** — Generates Hugo-compatible front matter including `title`, `slug`, `date`, `lastmod`, `draft`, `categories`, `tags`, `siyuan_id`, and `siyuan_path`.
-- **Incremental Updates** — Reuses the same Hugo folder on later exports by matching `siyuan_id`.
-- **Git Workflow** — Optional automatic `git add`, `commit`, and `push` after export.
-- **Per-Document Overrides** — Customize individual documents via custom attributes.
-- **Desktop Only** — Requires SiYuan desktop with Node.js runtime access.
+## 安装
 
-### Installation
+该插件暂未上线集市，需手动安装。
 
-#### Manual Install
-
-1. Download `package.zip` from the [Releases](../../releases) page.
-2. Extract it to `{SiYuan workspace}/data/plugins/siyuan-plugin-hugo/`.
-3. Restart SiYuan or reload plugins.
-
-### Configuration
-
-Open **Settings → Marketplace → Plugins → SiYuan Hugo Sync** and configure:
-
-| Setting | Description | Default |
-|---------|-------------|---------|
-| **Hugo repository path** | Absolute path to your local Hugo repo root. | *(empty)* |
-| **Content directory** | Relative path inside the Hugo repo. | `content/post` |
-| **Default category** | Optional category written to front matter. | *(empty)* |
-| **Commit message template** | Supports `{title}` and `{docId}` placeholders. | `docs(hugo): sync {title}` |
-| **Draft by default** | Exported posts are marked as draft. | `false` |
-| **Auto push after export** | Run git add/commit/push on every export. | `false` |
-
-### Per-Document Overrides
-
-Set these custom attributes on the document root block to override defaults:
-
-- `custom-hugo-slug` — Custom URL slug.
-- `custom-hugo-section` — Override the content section (e.g., `blog`).
-- `custom-hugo-draft` — Override draft status (`true` / `false`).
-
-### Usage
-
-- **Top Bar** — Click the upload icon in the top-right toolbar.
-- **Command Palette** — Use `Export current document to Hugo` or `Export current document and push`.
-
-### Development
-
-1. Install dependencies: `pnpm install`
-2. Create the SiYuan dev link: `pnpm run make-link`
-3. Start watch build: `pnpm run dev`
-4. Build package: `pnpm run build`
-
----
-
-<a id="中文"></a>
-## 中文
-
-思源笔记插件，将当前文档导出到本地 Hugo 仓库，并可选择自动执行 `git add`、`git commit` 和 `git push`。
-
-### 功能特性
-
-- **导出为 Hugo Leaf Bundle** — 将当前文档导出为 `content/<section>/<folder>/index.md`，并同步相关资源文件。
-- **资源文件同步** — 自动将思源笔记中引用的 `/assets/...` 文件复制到 leaf bundle 中，并重写链接路径。
-- **TOML Front Matter** — 自动生成兼容 Hugo 的 front matter，包含 `title`、`slug`、`date`、`lastmod`、`draft`、`categories`、`tags`、`siyuan_id`、`siyuan_path`。
-- **增量更新** — 通过匹配 `siyuan_id`，后续导出会复用同一个 Hugo 文件夹，避免重复创建。
-- **Git 工作流** — 导出后可选择自动执行 `git add`、`commit` 和 `push`。
-- **单文档覆盖** — 通过自定义属性为单个文档设置独立配置。
-- **仅桌面端** — 需要思源笔记桌面版，且具备 Node.js 运行环境。
-
-### 安装方式
-
-#### 手动安装
-
-1. 从 [Releases](../../releases) 页面下载 `package.zip`。
-2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`。
+1. 从 [Releases](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/releases) 页面下载 `package.zip`。
+2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`，解压目录文件名需指定 `siyuan-plugin-hugo`
 3. 重启思源笔记或重新加载插件。
 
-### 必要配置
+思源工作空间可在客户端设置中查看，如图
+<img width="920" height="342" alt="image" src="https://github.com/user-attachments/assets/27862d7a-03b8-4174-a5b8-d45eaa5ae270" />
 
-打开 **设置 → 集市 → 插件 → 思源 Hugo 同步**，配置以下选项：
 
-| 配置项 | 说明 | 默认值 |
-|--------|------|--------|
-| **Hugo 仓库路径** | 本地 Hugo 仓库根目录的绝对路径。 | *(空)* |
-| **内容目录** | Hugo 仓库内的相对内容目录。 | `content/post` |
-| **默认分类** | 可选，写入 front matter 的分类。 | *(空)* |
-| **提交信息模板** | 支持 `{title}` 和 `{docId}` 占位符。 | `docs(hugo): sync {title}` |
-| **默认标记为草稿** | 导出时默认将文章标记为 draft。 | `false` |
-| **导出后自动推送** | 普通导出也执行 git add/commit/push。 | `false` |
+## 配置
 
-### 单文档属性覆盖
+解压后重启思源笔记，即可在已下载的插件中显示，进入配置页面按需选择，首次配置需要添加 Hugo 仓库路径。
 
-在文档的根块上设置以下自定义属性，可覆盖全局默认值：
+<img width="1448" height="1179" alt="image" src="https://github.com/user-attachments/assets/37e67a8a-70d2-45fc-83a4-fafc2af667cf" />
 
-- `custom-hugo-slug` — 自定义 URL 别名。
-- `custom-hugo-section` — 覆盖内容目录（如 `blog`）。
-- `custom-hugo-draft` — 覆盖草稿状态（`true` / `false`）。
 
-### 使用方式
 
-- **顶栏按钮** — 点击右上角工具栏的上传图标。
-- **命令面板** — 使用「导出当前文档到 Hugo」或「导出当前文档并推送」。
+## 使用方式
 
-### 开发
+- **顶栏按钮** — 点击右上角工具栏的上传图标，选择「导出当前文档到 Hugo」或「导出当前文档并推送」。
 
-1. 安装依赖：`pnpm install`
-2. 创建思源开发链接：`pnpm run make-link`
-3. 启动监听构建：`pnpm run dev`
-4. 构建打包：`pnpm run build`
+若右上角无显示图标可在插件管理中讲图标钉住。
+<img width="613" height="126" alt="image" src="https://github.com/user-attachments/assets/3da50d63-eb1b-4ac3-954e-e7ed4ef7c662" />
+---
+<img width="434" height="247" alt="image" src="https://github.com/user-attachments/assets/97fe9c66-985d-4062-8af4-c511524663e8" />
+
+
+## Front Matter 示例
+
+导出后生成的 `index.md` 头部如下：
+
+```toml
++++
+title = "我的第一篇博客"
+slug = "my-first-post"
+date = 2025-01-15T10:30:00+08:00
+lastmod = 2025-01-15T12:00:00+08:00
+draft = false
+categories = ["技术"]
+siyuan_id = "20250115103000-abcdefg"
+siyuan_path = "20250115103000-abcdefg/20250115103000-hijklmn"
++++
+```
+
+## 开发
+
+```bash
+# 安装依赖
+pnpm install
+
+# 创建思源开发链接（将 dev 目录链接到思源插件目录）
+pnpm run make-link
+
+# 启动监听构建
+pnpm run dev
+
+# 构建生产版本
+pnpm run build
+```
+
+## 许可证
+
+[MIT](./LICENSE)
