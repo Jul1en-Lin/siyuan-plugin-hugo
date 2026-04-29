@@ -2,7 +2,7 @@
   "name": "siyuan-plugin-hugo",
   "author": "Jul1en-Lin",
   "url": "https://github.com/Jul1en-Lin/siyuan-plugin-hugo",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "minAppVersion": "3.2.1",
   "disabledInPublish": false,
   "backends": [
@@ -23,8 +23,8 @@
     "zh_CN": "将当前思源文档一键导出到本地 Hugo 仓库，并可按需执行 Git 推送。"
   },
   "readme": {
-    "default": "README.md",
-    "zh_CN": "README_zh_CN.md"
+    "default": "README_en.md",
+    "zh_CN": "README.md"
   },
   "funding": {
     "openCollective": "",

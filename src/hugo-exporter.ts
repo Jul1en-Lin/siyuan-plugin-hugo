@@ -14,6 +14,7 @@ export interface ExportResult {
     targetDir: string;
     assetCount: number;
     pushed: boolean;
+    skippedAssets: string[];
 }
 
 export interface ExportMessages {
@@ -30,6 +31,7 @@ export interface ExportMessages {
 export async function exportDocumentToHugo(docId: string, settings: HugoPluginSettings, options?: {
     push?: boolean;
     messages?: Partial<ExportMessages>;
+    category?: string;
 }) {
     const node = getNodeRuntime();
     const mergedSettings = { ...DEFAULT_SETTINGS, ...settings };
@@ -79,7 +81,7 @@ export async function exportDocumentToHugo(docId: string, settings: HugoPluginSe
 
     node.fs.mkdirSync(targetDir, { recursive: true });
 
-    const assetMap = await materializeAssets(exported.content, targetDir, messages);
+    const { assetMap, skippedAssets } = await materializeAssets(exported.content, targetDir, messages);
     const markdown = normalizeMarkdownForHugo(rewriteAssetLinks(exported.content, assetMap));
     const frontMatter = buildTomlFrontMatter({
         title,
@@ -87,7 +89,7 @@ export async function exportDocumentToHugo(docId: string, settings: HugoPluginSe
         draft,
         createdAt,
         updatedAt,
-        category: mergedSettings.defaultCategory,
+        category: options?.category ?? mergedSettings.defaultCategory,
         tags,
         siyuanId: docId,
         siyuanPath: exported.hPath || docBlock.hpath || "",
@@ -114,6 +116,7 @@ export async function exportDocumentToHugo(docId: string, settings: HugoPluginSe
         targetDir,
         assetCount: assetMap.size,
         pushed,
+        skippedAssets,
     } satisfies ExportResult;
 }
 
@@ -179,13 +182,28 @@ async function materializeAssets(markdown: string, targetDir: string, messages: 
     const assetMap = new Map<string, string>();
     const sourceToRelativeTarget = new Map<string, string>();
     const usedNames = new Set<string>();
+    const skippedAssets: string[] = [];
 
     for (const assetRef of extractAssetReferences(markdown)) {
         let relativeTargetPath = sourceToRelativeTarget.get(assetRef.sourcePath);
         if (!relativeTargetPath) {
-            const blob = await getFileBlob(assetRef.sourcePath);
+            let blob = await getFileBlob(assetRef.sourcePath);
+
+            // Fallback: read directly from SiYuan data directory via filesystem
             if (!blob) {
-                throw new Error(formatMessage(messages.assetReadFailed, { path: assetRef.sourcePath }));
+                const dataDir = (window as any).siyuan?.config?.system?.dataDir as string | undefined;
+                if (dataDir) {
+                    const fsPath = node.path.join(dataDir, decodeURIComponent(assetRef.sourcePath).replace(/^\/data\//, ""));
+                    if (node.fs.existsSync(fsPath)) {
+                        const buffer = node.fs.readFileSync(fsPath);
+                        blob = new Blob([buffer]);
+                    }
+                }
+            }
+
+            if (!blob) {
+                skippedAssets.push(assetRef.sourcePath);
+                continue;
             }
 
             const assetDir = node.path.join(targetDir, "assets");
@@ -203,7 +221,7 @@ async function materializeAssets(markdown: string, targetDir: string, messages: 
         assetMap.set(assetRef.originalPath, relativeTargetPath);
     }
 
-    return assetMap;
+    return { assetMap, skippedAssets };
 }
 
 function extractAssetReferences(markdown: string) {
@@ -229,7 +247,8 @@ function extractAssetReferences(markdown: string) {
 function rewriteAssetLinks(markdown: string, assetMap: Map<string, string>) {
     let output = markdown;
     for (const [sourcePath, relativePath] of assetMap.entries()) {
-        output = output.split(sourcePath).join(relativePath);
+        const encodedPath = relativePath.replace(/ /g, "%20");
+        output = output.split(sourcePath).join(encodedPath);
     }
     return output;
 }
@@ -254,8 +273,9 @@ function buildTomlFrontMatter(meta: {
         `draft = ${meta.draft ? "true" : "false"}`,
     ];
 
-    if (meta.category.trim()) {
-        lines.push(`categories = [${JSON.stringify(meta.category.trim())}]`);
+    const cats = meta.category.split(",").map(s => s.trim()).filter(Boolean);
+    if (cats.length) {
+        lines.push(`categories = [${cats.map(c => JSON.stringify(c)).join(", ")}]`);
     }
     if (meta.tags.length) {
         lines.push(`tags = [${meta.tags.map((tag) => JSON.stringify(tag)).join(", ")}]`);
