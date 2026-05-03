@@ -15,8 +15,8 @@
     "desktop-window"
   ],
   "displayName": {
-    "default": "SiYuan Hugo Sync",
-    "zh_CN": "思源 Hugo 同步"
+    "default": "Hugo Sync",
+    "zh_CN": "Hugo 同步"
   },
   "description": {
     "default": "Export the current SiYuan document into a local Hugo repository and optionally push it with git.",
@@ -25,12 +25,6 @@
   "readme": {
     "default": "README_en.md",
     "zh_CN": "README.md"
-  },
-  "funding": {
-    "openCollective": "",
-    "patreon": "",
-    "github": "",
-    "custom": []
   },
   "keywords": [
     "hugo",
