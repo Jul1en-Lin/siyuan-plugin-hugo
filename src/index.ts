@@ -20,18 +20,20 @@ export default class SiyuanHugoPlugin extends Plugin {
     private isDesktop = false;
     private settingUtils!: SettingUtils;
     private topBarElement?: HTMLElement;
+    private currentLanguage = DEFAULT_SETTINGS.language;
 
     async onload() {
         this.isDesktop = getFrontend() === "desktop" || getFrontend() === "desktop-window";
 
         const saved = await this.loadData(`${SETTINGS_STORAGE_NAME}.json`);
         const language = saved?.language ?? DEFAULT_SETTINGS.language;
+        this.currentLanguage = language;
         if (language && I18N_MAP[language]) {
             this.i18n = I18N_MAP[language];
         }
 
         this.registerSettings();
-        await this.settingUtils.load();
+        await this.settingUtils.load(saved);
 
         this.addCommand({
             langKey: "exportCurrentDocCommand",
@@ -56,9 +58,7 @@ export default class SiyuanHugoPlugin extends Plugin {
         });
     }
 
-    onunload() {
-        console.log(`[${this.name}] unloaded`);
-    }
+    onunload() {}
 
     async uninstall() {
         await this.removeData(`${SETTINGS_STORAGE_NAME}.json`);
@@ -72,6 +72,7 @@ export default class SiyuanHugoPlugin extends Plugin {
         this.settingUtils = new SettingUtils({
             plugin: this,
             name: SETTINGS_STORAGE_NAME,
+            callback: (data: HugoPluginSettings) => this.applyLanguageSetting(data.language),
         });
 
         this.settingUtils.addItem({
@@ -85,21 +86,6 @@ export default class SiyuanHugoPlugin extends Plugin {
                 zh_CN: "简体中文",
                 en_US: "English",
             },
-            action: {
-                callback: async () => {
-                    const value = this.settingUtils.take("language", true) as string;
-                    await this.settingUtils.save();
-                    const next = I18N_MAP[value];
-                    if (next) {
-                        this.i18n = next;
-                    } else {
-                        // Reload to let framework pick system language
-                        window.location.reload();
-                        return;
-                    }
-                    showMessage(this.i18n.languageChanged);
-                },
-            },
         });
 
         this.settingUtils.addItem({
@@ -108,7 +94,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "textinput",
             title: this.i18n.hugoRepoPath,
             description: this.i18n.hugoRepoPathDesc,
-            action: { callback: () => this.settingUtils.takeAndSave("hugoRepoPath") },
         });
         this.settingUtils.addItem({
             key: "contentBaseDir",
@@ -116,7 +101,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "textinput",
             title: this.i18n.contentBaseDir,
             description: this.i18n.contentBaseDirDesc,
-            action: { callback: () => this.settingUtils.takeAndSave("contentBaseDir") },
         });
         this.settingUtils.addItem({
             key: "defaultCategory",
@@ -124,7 +108,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "textinput",
             title: this.i18n.defaultCategory,
             description: this.i18n.defaultCategoryDesc,
-            action: { callback: () => this.settingUtils.takeAndSave("defaultCategory") },
         });
         this.settingUtils.addItem({
             key: "commitMessageTemplate",
@@ -132,7 +115,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "textinput",
             title: this.i18n.commitMessageTemplate,
             description: this.i18n.commitMessageTemplateDesc,
-            action: { callback: () => this.settingUtils.takeAndSave("commitMessageTemplate") },
         });
         this.settingUtils.addItem({
             key: "defaultDraft",
@@ -140,12 +122,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "checkbox",
             title: this.i18n.defaultDraft,
             description: this.i18n.defaultDraftDesc,
-            action: {
-                callback: async () => {
-                    const value = !this.settingUtils.get("defaultDraft");
-                    await this.settingUtils.setAndSave("defaultDraft", value);
-                },
-            },
         });
         this.settingUtils.addItem({
             key: "autoPushAfterExport",
@@ -153,12 +129,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "checkbox",
             title: this.i18n.autoPushAfterExport,
             description: this.i18n.autoPushAfterExportDesc,
-            action: {
-                callback: async () => {
-                    const value = !this.settingUtils.get("autoPushAfterExport");
-                    await this.settingUtils.setAndSave("autoPushAfterExport", value);
-                },
-            },
         });
         this.settingUtils.addItem({
             key: "confirmCategoryBeforeExport",
@@ -166,12 +136,6 @@ export default class SiyuanHugoPlugin extends Plugin {
             type: "checkbox",
             title: this.i18n.confirmCategoryBeforeExport,
             description: this.i18n.confirmCategoryBeforeExportDesc,
-            action: {
-                callback: async () => {
-                    const value = !this.settingUtils.get("confirmCategoryBeforeExport");
-                    await this.settingUtils.setAndSave("confirmCategoryBeforeExport", value);
-                },
-            },
         });
         this.settingUtils.addItem({
             key: "hint",
@@ -207,6 +171,18 @@ export default class SiyuanHugoPlugin extends Plugin {
             y: rect.bottom,
             isLeft: true,
         });
+    }
+
+    private applyLanguageSetting(language: string) {
+        if (language === this.currentLanguage) {
+            return;
+        }
+        this.currentLanguage = language;
+        const next = I18N_MAP[language];
+        if (next) {
+            this.i18n = next;
+        }
+        showMessage(this.i18n.languageChanged);
     }
 
     private async runExport(forcePush: boolean) {
@@ -273,7 +249,6 @@ export default class SiyuanHugoPlugin extends Plugin {
                 showMessage(`${this.i18n.assetsSkipped}: ${skippedNames}`);
             }
         } catch (error) {
-            console.error(`[${this.name}] export failed`, error);
             const message = error instanceof Error ? error.message : String(error);
             showMessage(`${this.i18n.exportFailed}: ${message}`);
         }

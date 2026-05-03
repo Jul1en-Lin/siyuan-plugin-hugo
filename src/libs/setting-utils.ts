@@ -101,11 +101,11 @@ export class SettingUtils {
                     this.updateValueFromElement(key);
                 }
                 let data = this.dump();
+                this.plugin.data[this.name] = data;
+                void this.save(data);
                 if (args.callback !== undefined) {
                     args.callback(data);
                 }
-                this.plugin.data[this.name] = data;
-                this.save(data);
             },
             destroyCallback: () => {
                 //Restore the original value
@@ -116,9 +116,10 @@ export class SettingUtils {
         });
     }
 
-    async load() {
-        let data = await this.plugin.loadData(this.file);
-        console.debug('Load config:', data);
+    async load(data?: any) {
+        if (arguments.length === 0) {
+            data = await this.plugin.loadData(this.file);
+        }
         if (data) {
             for (let [key, item] of this.settings) {
                 item.value = data?.[key] ?? item.value;
@@ -131,7 +132,6 @@ export class SettingUtils {
     async save(data?: any) {
         data = data ?? this.dump();
         await this.plugin.saveData(this.file, this.dump());
-        console.debug('Save config:', data);
         return data;
     }
 
@@ -244,7 +244,6 @@ export class SettingUtils {
         const IsCustom = item.type === 'custom';
         let error = IsCustom && (item.createElement === undefined || item.getEleVal === undefined || item.setEleVal === undefined);
         if (error) {
-            console.error('The custom setting item must have createElement, getEleVal and setEleVal methods');
             return;
         }
 

@@ -85,4 +85,4 @@ pnpm run build
 
 ## 许可证
 
-[MIT](./LICENSE)
+[MIT](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/blob/main/LICENSE)
