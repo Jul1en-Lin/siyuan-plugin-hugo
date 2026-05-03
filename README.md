@@ -1,6 +1,6 @@
 # siyuan-plugin-hugo
 
-> **[English](./README_en.md)** | 中文
+> **[English](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/blob/main/README_en.md)** | 中文
 
 将思源笔记中的文档一键导出到本地 Hugo 仓库，并可按需自动执行 Git 推送。
 

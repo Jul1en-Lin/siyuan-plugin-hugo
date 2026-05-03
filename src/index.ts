@@ -60,6 +60,10 @@ export default class SiyuanHugoPlugin extends Plugin {
         console.log(`[${this.name}] unloaded`);
     }
 
+    async uninstall() {
+        await this.removeData(`${SETTINGS_STORAGE_NAME}.json`);
+    }
+
     openSetting(): void {
         this.openPluginSettings();
     }

@@ -1,6 +1,6 @@
 # SiYuan Hugo Sync
 
-> English | **[中文](./README.md)**
+> English | **[中文](https://github.com/Jul1en-Lin/siyuan-plugin-hugo/blob/main/README.md)**
 
 A SiYuan plugin that exports the current document to a local Hugo repository, with optional automatic Git push.
 
