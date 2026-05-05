@@ -28,27 +28,11 @@
 2. 解压到 `{思源工作空间}/data/plugins/siyuan-plugin-hugo/`，解压目录文件名需指定 `siyuan-plugin-hugo`
 3. 重启思源笔记或重新加载插件。
 
-思源工作空间可在客户端设置中查看，如图
-<img width="920" height="342" alt="image" src="https://github.com/user-attachments/assets/27862d7a-03b8-4174-a5b8-d45eaa5ae270" />
-
+思源工作空间可在客户端设置中查看
 
 ## 配置
 
 解压后重启思源笔记，即可在已下载的插件中显示，进入配置页面按需选择，首次配置需要添加 Hugo 仓库路径。
-
-<img width="1448" height="1179" alt="image" src="https://github.com/user-attachments/assets/37e67a8a-70d2-45fc-83a4-fafc2af667cf" />
-
-
-
-## 使用方式
-
-- **顶栏按钮** — 点击右上角工具栏的上传图标，选择「导出当前文档到 Hugo」或「导出当前文档并推送」。
-
-若右上角无显示图标可在插件管理中讲图标钉住。
-<img width="613" height="126" alt="image" src="https://github.com/user-attachments/assets/3da50d63-eb1b-4ac3-954e-e7ed4ef7c662" />
----
-<img width="434" height="247" alt="image" src="https://github.com/user-attachments/assets/97fe9c66-985d-4062-8af4-c511524663e8" />
-
 
 ## Front Matter 示例
 
@@ -61,7 +45,7 @@ slug = "my-first-post"
 date = 2025-01-15T10:30:00+08:00
 lastmod = 2025-01-15T12:00:00+08:00
 draft = false
-categories = ["技术"]
+categories = ["技术","生活"]
 siyuan_id = "20250115103000-abcdefg"
 siyuan_path = "20250115103000-abcdefg/20250115103000-hijklmn"
 +++
@@ -82,6 +66,8 @@ pnpm run dev
 # 构建生产版本
 pnpm run build
 ```
+
+如使用过程中有任何问题欢迎来提 Issue :)
 
 ## 许可证
 
