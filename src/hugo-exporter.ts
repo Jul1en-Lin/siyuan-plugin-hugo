@@ -82,7 +82,11 @@ export async function exportDocumentToHugo(docId: string, settings: HugoPluginSe
     node.fs.mkdirSync(targetDir, { recursive: true });
 
     const { assetMap, skippedAssets } = await materializeAssets(exported.content, targetDir, messages);
-    const markdown = normalizeMarkdownForHugo(rewriteAssetLinks(exported.content, assetMap));
+    const rewrittenMarkdown = rewriteAssetLinks(exported.content, assetMap);
+    const imageAltTextMarkdown = mergedSettings.stripDefaultImageAltText
+        ? stripDefaultImageAltText(rewrittenMarkdown)
+        : rewrittenMarkdown;
+    const markdown = normalizeMarkdownForHugo(imageAltTextMarkdown);
     const frontMatter = buildTomlFrontMatter({
         title,
         slug,
@@ -251,6 +255,41 @@ function rewriteAssetLinks(markdown: string, assetMap: Map<string, string>) {
         output = output.split(sourcePath).join(encodedPath);
     }
     return output;
+}
+
+function stripDefaultImageAltText(markdown: string) {
+    const lines = normalizeLineEndings(markdown).split("\n");
+    let inFence = false;
+    let fenceMarker = "";
+
+    const normalizedLines = lines.map((line) => {
+        const trimmed = line.trimStart();
+        const fenceMatch = trimmed.match(/^(```+|~~~+)/);
+        if (fenceMatch) {
+            const marker = fenceMatch[1][0];
+            if (!inFence) {
+                inFence = true;
+                fenceMarker = marker;
+            } else if (marker === fenceMarker) {
+                inFence = false;
+                fenceMarker = "";
+            }
+            return line;
+        }
+
+        if (inFence) {
+            return line;
+        }
+
+        return line.replace(/!\[([^\]\n]*)]\(([^)\n]+)\)/g, (match, altText: string, destination: string) => {
+            if (altText.trim() !== "image") {
+                return match;
+            }
+            return `![](${destination})`;
+        });
+    });
+
+    return normalizedLines.join("\n");
 }
 
 function buildTomlFrontMatter(meta: {

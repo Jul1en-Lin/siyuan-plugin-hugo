@@ -131,6 +131,13 @@ export default class SiyuanHugoPlugin extends Plugin {
             description: this.i18n.autoPushAfterExportDesc,
         });
         this.settingUtils.addItem({
+            key: "stripDefaultImageAltText",
+            value: DEFAULT_SETTINGS.stripDefaultImageAltText,
+            type: "checkbox",
+            title: this.i18n.stripDefaultImageAltText,
+            description: this.i18n.stripDefaultImageAltTextDesc,
+        });
+        this.settingUtils.addItem({
             key: "confirmCategoryBeforeExport",
             value: DEFAULT_SETTINGS.confirmCategoryBeforeExport,
             type: "checkbox",

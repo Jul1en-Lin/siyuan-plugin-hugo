@@ -29,6 +29,8 @@
     "defaultDraftDesc": "If enabled, exported posts are marked as draft unless custom-hugo-draft overrides it.",
     "autoPushAfterExport": "Auto push after export",
     "autoPushAfterExportDesc": "If enabled, a normal export will also run git add, commit and push.",
+    "stripDefaultImageAltText": "Hide default image alt text",
+    "stripDefaultImageAltTextDesc": "On export, clear the default image alt text 'image' so Hugo themes do not show it as a caption. Manually written alt text is preserved.",
     "desktopOnly": "This plugin currently works in SiYuan desktop only.",
     "noDocOpen": "Please open a document first.",
     "repoPathRequired": "Please configure the Hugo repository path first.",

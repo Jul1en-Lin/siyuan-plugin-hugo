@@ -29,6 +29,8 @@
     "defaultDraftDesc": "开启后，导出的文章默认会标记为 draft，除非被 custom-hugo-draft 覆盖。",
     "autoPushAfterExport": "导出后自动推送",
     "autoPushAfterExportDesc": "开启后，普通导出也会执行 git add、commit 和 push。",
+    "stripDefaultImageAltText": "隐藏默认图片提示文本",
+    "stripDefaultImageAltTextDesc": "导出时将图片默认提示文本 image 清空，避免 Hugo 主题把它显示为题注；手动填写的提示文本会保留。",
     "desktopOnly": "这个插件目前仅支持思源桌面端。",
     "noDocOpen": "请先打开一个文档。",
     "repoPathRequired": "请先配置 Hugo 仓库路径。",

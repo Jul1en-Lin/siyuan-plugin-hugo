@@ -14,6 +14,7 @@ export interface HugoPluginSettings {
     confirmCategoryBeforeExport: boolean;
     autoPushAfterExport: boolean;
     defaultDraft: boolean;
+    stripDefaultImageAltText: boolean;
     commitMessageTemplate: string;
 }
 
@@ -25,5 +26,6 @@ export const DEFAULT_SETTINGS: HugoPluginSettings = {
     confirmCategoryBeforeExport: true,
     autoPushAfterExport: false,
     defaultDraft: false,
+    stripDefaultImageAltText: true,
     commitMessageTemplate: "docs(hugo): sync {title}",
 };
